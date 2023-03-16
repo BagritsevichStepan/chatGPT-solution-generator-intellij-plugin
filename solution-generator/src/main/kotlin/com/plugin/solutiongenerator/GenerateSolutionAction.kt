@@ -79,7 +79,7 @@ class GenerateSolutionAction: AnAction() {
     }
 
     private fun getResponseText(): String {
-        val textToParse ="$selectedText $fileProgrammingLanguage\n${RequestParser.deleteFirstLineSeparators(
+        val textToParse ="$selectedText\n${RequestParser.deleteFirstLineSeparators(
             messenger.makeRequestAndGetResponse()!!)}"
         val parser = RequestParser(
             textToParse,
