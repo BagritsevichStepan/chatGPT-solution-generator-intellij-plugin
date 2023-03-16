@@ -1,0 +1,43 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.plugin.solution-generator</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Solution-generator</name>
+
+    <vendor url="https://github.com/BagritsevichStepan" email="bagr.stepan@gmail.com">Solution Generator</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    A plugin generate solution for programming tasks using ChatGPT right in the IntelliJ IDEA.
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.plugin.solutiongenerator.settings.ChatGPTSettingsState"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.plugin.solutiongenerator.settings.ChatGPTSettingsConfigurable"
+                id="com.plugin.solutiongenerator.settings.ChatGPTSettingsConfigurable"
+                displayName="ChatGPT Solution Generator"/>
+    </extensions>
+
+    <actions>
+        <action id="com.plugin.solutiongenerator.GenerateSolutionAction"
+                class="com.plugin.solutiongenerator.GenerateSolutionAction" text="Generate Solution"
+                icon="/icons/pluginIcon.svg"
+                description="Generate solution">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta BACK_SLASH" second-keystroke="meta G"/>
+        </action>
+    </actions>
+</idea-plugin>
