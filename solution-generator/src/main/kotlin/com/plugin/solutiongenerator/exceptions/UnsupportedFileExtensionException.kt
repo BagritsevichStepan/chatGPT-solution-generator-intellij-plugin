@@ -1,5 +1,4 @@
 package com.plugin.solutiongenerator.exceptions
 
-class UnsupportedFileExtensionException: CustomException {
-    constructor(extension: String): super("Unknown file extension $extension.")
+class UnsupportedFileExtensionException(extension: String) : CustomException("Unknown file extension $extension.") {
 }

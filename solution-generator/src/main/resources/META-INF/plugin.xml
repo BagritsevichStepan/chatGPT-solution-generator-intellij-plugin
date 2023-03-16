@@ -36,7 +36,7 @@
                 class="com.plugin.solutiongenerator.GenerateSolutionAction" text="Generate Solution"
                 icon="/icons/pluginIcon.svg"
                 description="Generate solution">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="meta BACK_SLASH" second-keystroke="meta G"/>
         </action>
     </actions>
