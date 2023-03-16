@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.plugin"
-version = "2.0"
+version = "2.4"
 
 repositories {
     mavenCentral()
@@ -50,4 +50,22 @@ tasks {
     publishPlugin {
         token.set(System.getenv("ORG_GRADLE_PROJECT_intellijPublishToken"))
     }
+}
+
+tasks.withType<Jar> {
+    enabled = true
+    isZip64 = true
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(
+        configurations.compileClasspath.map { config ->
+            config.map {
+                if (it.isDirectory) {
+                    it
+                } else {
+                    zipTree(it)
+                }
+            }
+        }
+    )
 }
