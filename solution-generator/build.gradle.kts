@@ -53,20 +53,20 @@ tasks {
 }
 
 
-tasks.withType<Jar> {
-    enabled = true
-    isZip64 = true
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from(
-        configurations.compileClasspath.map { config ->
-            config.map {
-                if (it.isDirectory) {
-                    it
-                } else {
-                    zipTree(it)
-                }
-            }
-        }
-    )
-}
+//tasks.withType<Jar> {
+//    enabled = true
+//    isZip64 = true
+//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//
+//    from(
+//        configurations.compileClasspath.map { config ->
+//            config.map {
+//                if (it.isDirectory) {
+//                    it
+//                } else {
+//                    zipTree(it)
+//                }
+//            }
+//        }
+//    )
+//}
