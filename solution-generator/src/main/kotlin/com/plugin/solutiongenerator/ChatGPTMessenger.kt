@@ -1,5 +1,6 @@
 package com.plugin.solutiongenerator
 
+import com.intellij.openapi.ui.Messages
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
@@ -21,7 +22,13 @@ class ChatGPTMessenger(private val text: String, private val programmingLanguage
     public fun makeRequestAndGetResponse(): String? {
         val response = getResponse()
         if (response?.statusCode() == HttpURLConnection.HTTP_OK) {
-            return extractTextFromResponseBody(response.body())
+            val fuckString = extractTextFromResponseBody(response.body())
+            Messages.showMessageDialog(
+                fuckString,
+                "Zalupa",
+                Messages.getInformationIcon()
+            )
+            return fuckString
         }
         if (response?.statusCode() == INVALID_API_KEY_STATUS_CODE) {
             throw InvalidApiKeyException()
