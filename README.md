@@ -3,7 +3,7 @@ A plugin generates solution for programming tasks using ChatGPT right in the Int
 
 + [Usage](#usage)
 + [Features](#features)
-  1. [Autodetecting the programming language used](#autodetecting-the-programming-language-used)
+  1. [Detecting the programming language](#detecting-the-programming-language)
   2. [Markdown parser](#markdown-parser)
   3. [Comments adding](#comments-adding)
 
@@ -19,7 +19,7 @@ A plugin generates solution for programming tasks using ChatGPT right in the Int
 
 
 ## Features
-### Autodetecting the programming language used
+### Detecting the programming language
 The plugin detects which programming language you are currently using (by your file extension) and asks Open AI to respond in this programming language. Thus, you don't need to write in the problem statement what programming language must be used:
 + **C++:**
 
