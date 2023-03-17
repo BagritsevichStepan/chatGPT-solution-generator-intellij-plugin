@@ -23,7 +23,7 @@ A plugin generates solution for programming tasks using ChatGPT right in the Int
 The plugin detects which programming language you are currently using (by your file extension) and asks Open AI to respond in this programming language. Thus, you don't need to write in the problem statement what programming language must be used:
 + **C++:**
 
-<img src="/images/4.png" alt="Preferences" width="45%"/>  <img src="/images/5.png" alt="Preferences" width="45%"/>
+<img src="/images/4.2.png" alt="Preferences" width="100%"/>  <img src="/images/5.2.png" alt="Preferences" width="100%"/>
 
 + **Kotlin:**
 
