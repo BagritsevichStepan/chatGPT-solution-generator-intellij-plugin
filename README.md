@@ -39,7 +39,7 @@ The plugin gets a response from Chat GPT in Markdown. [My own library](https://g
 Аfter the response is processed by the Markdown-Parser, the plugin divides the response into lines according to the width of the user's screen. So that horizontal scrolling does not occur. The plugin does not separate lines that are part of the code blocks, so that the code stays correct. Also word transposition is taken into account. 
 
 ### Comments adding
-Аfter splitting the plugin adds comments to the response lines that are not part of the code blocks. The plugin supports the comment syntax of many programming languages.
+Аfter splitting the plugin adds comments to the response lines that are not part of the code blocks. The plugin supports the comments syntax of many programming languages.
 
 + **HTML:**
 
