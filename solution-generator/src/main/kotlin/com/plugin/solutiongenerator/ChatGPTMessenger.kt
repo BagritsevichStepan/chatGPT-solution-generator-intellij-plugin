@@ -22,13 +22,7 @@ class ChatGPTMessenger(private val text: String, private val programmingLanguage
     public fun makeRequestAndGetResponse(): String? {
         val response = getResponse()
         if (response?.statusCode() == HttpURLConnection.HTTP_OK) {
-            val fuckString = extractTextFromResponseBody(response.body())
-            Messages.showMessageDialog(
-                fuckString,
-                "Zalupa",
-                Messages.getInformationIcon()
-            )
-            return fuckString
+            return extractTextFromResponseBody(response.body())
         }
         if (response?.statusCode() == INVALID_API_KEY_STATUS_CODE) {
             throw InvalidApiKeyException()
