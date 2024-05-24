@@ -15,20 +15,14 @@ import com.plugin.solutiongenerator.responseparser.RequestParser
 
 
 class GenerateSolutionAction: AnAction() {
-    private lateinit var messenger: ChatGPTMessenger
-    private lateinit var editor: Editor
-    private lateinit var project: Project
-    private lateinit var document: Document
-    private lateinit var selectedText: String
-    private lateinit var fileProgrammingLanguage: String
 
     companion object {
         private const val TEXT_WIDTH_PERCENTAGE_OF_SCREEN_WIDTH = 70
     }
 
     override fun update(event: AnActionEvent) {
-        val currentProject = event.project;
-        event.presentation.isEnabledAndVisible = currentProject != null;
+        val currentProject = event.project
+        event.presentation.isEnabledAndVisible = currentProject != null
     }
 
     override fun actionPerformed(event: AnActionEvent) {
@@ -40,47 +34,54 @@ class GenerateSolutionAction: AnAction() {
     }
 
     private fun processEvent(event: AnActionEvent) {
-        editor = event.getRequiredData(CommonDataKeys.EDITOR)
-        project = event.getRequiredData(CommonDataKeys.PROJECT)
-        document = editor.document
+        val editor = event.getRequiredData(CommonDataKeys.EDITOR)
+        val project = event.getRequiredData(CommonDataKeys.PROJECT)
+        val document = editor.document
 
-        try {
-            fileProgrammingLanguage = ProgrammingLanguages.getProgrammingLanguageFromFileExtension(
-                FileDocumentManager.getInstance().getFile(document)?.extension!!
-            )!!
-        } catch (e: UnsupportedFileExtensionException) {
+        val extension = FileDocumentManager.getInstance().getFile(document)?.extension
+        val fileProgrammingLanguage = if (extension != null) {
+            ProgrammingLanguages.getProgrammingLanguageFromFileExtension(extension)
+        } else {
+            null
+        }
+
+        if (fileProgrammingLanguage == null) {
             Messages.showMessageDialog(
-                "The file extension is not supported. Specify in the task the language for the answer from ChatGPT.",
+                "The file extension $extension is not supported. Specify in the task the language for the answer from ChatGPT.",
                 "Unsupported File Extension",
                 Messages.getInformationIcon()
             )
         }
 
-        try {
-            selectedText = editor.selectionModel.selectedText!!
-        } catch (e: NullPointerException) {
-            throw InvalidSelectedTextException()
-        }
+        val selectedText = editor.selectionModel.selectedText ?: throw InvalidSelectedTextException()
 
-        messenger = ChatGPTMessenger(selectedText, fileProgrammingLanguage)
-        replaceSelectedTextWithResponseText()
+        val messenger = ChatGPTMessenger(selectedText, fileProgrammingLanguage)
+
+        replaceSelectedTextWithResponseText(
+            editor, project, document, messenger, selectedText, fileProgrammingLanguage
+        )
     }
 
-    private fun replaceSelectedTextWithResponseText() {
+    private fun replaceSelectedTextWithResponseText(
+        editor: Editor, project: Project, document: Document,
+        messenger: ChatGPTMessenger, selectedText: String, fileProgrammingLanguage: String?
+    ) {
         val primaryCaret = editor.caretModel.primaryCaret
         val start = primaryCaret.selectionStart
         val end = primaryCaret.selectionEnd
 
         WriteCommandAction.runWriteCommandAction(project) {
-            document.replaceString(start, end, getResponseText())
+            document.replaceString(
+                start, end, getResponseText(editor, messenger, selectedText, fileProgrammingLanguage)
+            )
         }
 
         primaryCaret.removeSelection()
     }
 
-    private fun getResponseText(): String {
-        val textToParse ="$selectedText\n${RequestParser.deleteFirstLineSeparators(
-            messenger.makeRequestAndGetResponse()!!)}"
+    private fun getResponseText(editor: Editor, messenger: ChatGPTMessenger,
+                                selectedText: String, fileProgrammingLanguage: String?): String {
+        val textToParse ="$selectedText\n${RequestParser.deleteFirstLineSeparators(messenger.makeRequestAndGetResponse())}"
         val parser = RequestParser(
             textToParse,
             fileProgrammingLanguage,

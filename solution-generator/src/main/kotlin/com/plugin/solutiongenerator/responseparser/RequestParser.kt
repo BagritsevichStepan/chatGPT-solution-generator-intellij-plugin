@@ -7,11 +7,9 @@ import java.lang.reflect.Field
 import kotlin.math.min
 
 
-class RequestParser(private var request: String, private val programmingLanguage: String, private val maxWindowWidth: Int) {
-    lateinit var parsedRequest: List<Paragraphable>
-
+class RequestParser(private var request: String, private val programmingLanguage: String?, private val maxWindowWidth: Int) {
     companion object {
-        public fun deleteFirstLineSeparators(s: String): String {
+        fun deleteFirstLineSeparators(s: String): String {
             var result = s
             while (result.startsWith(System.lineSeparator())) {
                 result = result.drop(1)
@@ -20,9 +18,9 @@ class RequestParser(private var request: String, private val programmingLanguage
         }
     }
 
-    public fun parseRequestToEditorText(): String {
+    fun parseRequestToEditorText(): String {
         request = deleteFirstLineSeparators(request)
-        parsedRequest = MarkdownParser(StringSource(request)).parse()
+        val parsedRequest = MarkdownParser(StringSource(request)).parse()
         val text = StringBuilder()
         paragraphableListToText(parsedRequest, true, text)
         return text.toString()
@@ -30,10 +28,11 @@ class RequestParser(private var request: String, private val programmingLanguage
 
     private fun paragraphableListToText(list: List<Paragraphable>, addComments: Boolean, text: StringBuilder) {
         list.forEach { paragraph: Paragraphable ->
-                paragraphableToText(paragraph, addComments, text)
+            paragraphableToText(paragraph, addComments, text)
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun paragraphableToText(paragraph: Paragraphable, addComments: Boolean, text: StringBuilder) {
         var addCommentsTemp = addComments
         if (paragraph is Code) {

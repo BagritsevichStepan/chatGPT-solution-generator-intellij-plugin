@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull
     storages = [Storage("ChatGPTSettingsState.xml")]
 )
 class ChatGPTSettingsState: PersistentStateComponent<ChatGPTSettingsState> {
-    public var token = ""
+    var token = ""
 
     companion object {
-        public fun getInstance(): ChatGPTSettingsState? {
+        fun getInstance(): ChatGPTSettingsState? {
             return ApplicationManager.getApplication().getService(ChatGPTSettingsState::class.java)
         }
     }

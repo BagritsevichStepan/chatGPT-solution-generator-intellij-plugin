@@ -4,10 +4,10 @@ import com.intellij.openapi.ui.Messages
 
 class ExceptionsHandler {
     companion object {
-        public fun handleException(exception: Exception) {
+        fun handleException(exception: Exception) {
             Messages.showMessageDialog(
                 if (exception is CustomException) exception.message else "",
-                "An error occurred",
+                "An Error Occurred",
                 Messages.getInformationIcon()
             )
         }

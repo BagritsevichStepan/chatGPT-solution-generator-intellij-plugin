@@ -17,17 +17,14 @@ dependencies {
 }
 
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2021.3.3")
-    type.set("IC") // Target IDE Platform
+    type.set("IC")
 
     plugins.set(listOf())
 }
 
 tasks {
-    // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "11"
         targetCompatibility = "11"
@@ -53,20 +50,3 @@ tasks {
 }
 
 
-//tasks.withType<Jar> {
-//    enabled = true
-//    isZip64 = true
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//
-//    from(
-//        configurations.compileClasspath.map { config ->
-//            config.map {
-//                if (it.isDirectory) {
-//                    it
-//                } else {
-//                    zipTree(it)
-//                }
-//            }
-//        }
-//    )
-//}

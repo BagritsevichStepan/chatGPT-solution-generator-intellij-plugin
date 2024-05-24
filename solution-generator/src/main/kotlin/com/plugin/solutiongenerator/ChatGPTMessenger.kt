@@ -1,68 +1,70 @@
 package com.plugin.solutiongenerator
 
-import com.intellij.openapi.ui.Messages
+import com.plugin.solutiongenerator.exceptions.*
+import com.plugin.solutiongenerator.settings.ChatGPTSettingsState
+import org.json.JSONObject
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import org.json.JSONObject
 import java.nio.charset.StandardCharsets
-import com.plugin.solutiongenerator.exceptions.*
-import com.plugin.solutiongenerator.settings.ChatGPTSettingsState
 
-class ChatGPTMessenger(private val text: String, private val programmingLanguage: String) {
+class ChatGPTMessenger(private val text: String, private val programmingLanguage: String?) {
     private val client = HttpClient.newHttpClient()
 
     companion object {
         private const val CHATGPT_URL = "https://api.openai.com/v1/chat/completions"
         private const val INVALID_API_KEY_STATUS_CODE = 401
+
+        private fun getRequestBody(text: String, programmingLanguage: String?): String {
+            return "{\"model\": \"gpt-3.5-turbo\", \"messages\":[{\"role\": \"user\", \"content\": \"$text ${
+                if (programmingLanguage != null) "using $programmingLanguage" else ""
+            }\"}]}"
+        }
     }
 
-    public fun makeRequestAndGetResponse(): String? {
+    fun makeRequestAndGetResponse(): String {
         val response = getResponse()
-        if (response?.statusCode() == HttpURLConnection.HTTP_OK) {
-            val fuckString = extractTextFromResponseBody(response.body())
-            Messages.showMessageDialog(
-                fuckString,
-                "Zalupa",
-                Messages.getInformationIcon()
-            )
-            return fuckString
+        val statusCode = response.statusCode()
+
+        if (statusCode == HttpURLConnection.HTTP_OK) {
+            return extractTextFromResponseBody(response.body())
         }
-        if (response?.statusCode() == INVALID_API_KEY_STATUS_CODE) {
+        if (statusCode == INVALID_API_KEY_STATUS_CODE) {
             throw InvalidApiKeyException()
         }
-        throw ResponseStatusException(response?.statusCode()!!)
+        throw ResponseStatusException(statusCode)
     }
 
-    private fun getResponse(): HttpResponse<String>? {
+    private fun getResponse(): HttpResponse<String> {
+        val request = makeRequest()
         try {
-            return client.send(makeRequest(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
-        } catch (e: Exception) {
-            throw ResponseException()
+            return client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
+        } catch (e: IOException) {
+            throw ResponseException(e)
+        } catch (e: InterruptedException) {
+            throw ResponseException(e)
         }
     }
 
-    private fun makeRequest(): HttpRequest? {
-        try {
-            return HttpRequest.newBuilder()
-                .uri(URI(CHATGPT_URL))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer ${ChatGPTSettingsState.getInstance()?.token}")
-                .POST(convertTextToPostBody())
-                .build()
-        } catch (e: Exception) {
-            throw RequestException()
-        }
+    private fun makeRequest(): HttpRequest {
+        val token = ChatGPTSettingsState.getInstance()?.token ?: throw RequestException(InvalidApiKeyException("API key is not specified"))
+        return HttpRequest.newBuilder()
+            .uri(URI(CHATGPT_URL))
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer $token")
+            .POST(convertTextToPostBody())
+            .build()
     }
 
-    private fun convertTextToPostBody(): HttpRequest.BodyPublisher? {
-        val requestBody = "{\"model\": \"gpt-3.5-turbo\", \"messages\":[{\"role\": \"user\", \"content\": \"$text using $programmingLanguage\"}]}"
+    private fun convertTextToPostBody(): HttpRequest.BodyPublisher {
+        val requestBody = getRequestBody(text, programmingLanguage)
         return HttpRequest.BodyPublishers.ofString(JSONObject(requestBody).toString(), StandardCharsets.UTF_8)
     }
 
-    private fun extractTextFromResponseBody(responseBody: String): String? {
+    private fun extractTextFromResponseBody(responseBody: String): String {
         try {
             return JSONObject(responseBody)
                 .getJSONArray("choices")
@@ -70,7 +72,7 @@ class ChatGPTMessenger(private val text: String, private val programmingLanguage
                 .getJSONObject("message")
                 .getString("content")
         } catch (e: Exception) {
-            throw ResponseParseException()
+            throw ResponseParseException(e)
         }
     }
 }

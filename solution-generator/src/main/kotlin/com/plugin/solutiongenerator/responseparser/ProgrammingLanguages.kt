@@ -1,15 +1,9 @@
 package com.plugin.solutiongenerator.responseparser
 
-import com.plugin.solutiongenerator.exceptions.UnsupportedFileExtensionException
-
 class ProgrammingLanguages {
     companion object {
-        public fun getProgrammingLanguageFromFileExtension(extension: String): String? {
-            if (ProgrammingLanguagesExtensions.programmingLanguagesExtensions
-                    .containsKey(extension)) {
-                return ProgrammingLanguagesExtensions.programmingLanguagesExtensions[extension]
-            }
-            throw UnsupportedFileExtensionException(extension)
+        fun getProgrammingLanguageFromFileExtension(extension: String): String? {
+            return ProgrammingLanguagesExtensions[extension]
         }
 
         private val oneLineComments = mapOf(
@@ -25,12 +19,13 @@ class ProgrammingLanguages {
             "Sass" to listOf("/*", "*/")
         )
 
-        public fun addComments(programmingLanguage: String, text: String): String {
+        fun addComments(programmingLanguage: String?, text: String): String {
             if (oneLineComments.containsKey(programmingLanguage)) {
                 return "${oneLineComments[programmingLanguage]}  $text"
             }
             if (twoLineComments.containsKey(programmingLanguage)) {
-                return "${twoLineComments[programmingLanguage]?.get(0)}  $text  ${twoLineComments[programmingLanguage]?.get(1)}"
+                val twoLineComment = twoLineComments[programmingLanguage]!!
+                return "${twoLineComment[0]}  $text  ${twoLineComment[1]}"
             }
             return text
         }
